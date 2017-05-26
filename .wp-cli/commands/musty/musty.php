@@ -475,6 +475,16 @@ class musty extends \WP_CLI_Command {
 		// Now try to install everything.
 		foreach ($args as $plugin) {
 
+			// Might be able to save some time...
+			if (
+				!$force &&
+				preg_match('/^[a-z0-9\-]+$/', $plugin) &&
+				$wp_filesystem->exists(trailingslashit(WPMU_PLUGIN_DIR) . $plugin)
+			) {
+				WP_CLI::warning("$plugin " . __('already exists. Use --force to re-install.'));
+				continue;
+			}
+
 			// Try to install it as a regular plugin, first.
 			$result = WP_CLI::runcommand(
 				'plugin install ' . escapeshellarg($plugin) . ' --force',
@@ -534,6 +544,7 @@ class musty extends \WP_CLI_Command {
 
 		// Last thing, rebuild the links.
 		if ($changed > 0) {
+			static::$mu_plugins = null;
 			$this->autoloader();
 		}
 
@@ -661,6 +672,7 @@ class musty extends \WP_CLI_Command {
 
 		// Last thing, rebuild the links.
 		if ($changed > 0) {
+			static::$mu_plugins = null;
 			$this->autoloader();
 		}
 
