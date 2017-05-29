@@ -32,7 +32,7 @@ WP_CLI::add_command(
 	array(
 		'before_invoke'=>function() {
 			if (is_multisite()) {
-				WP_CLI::error(__('This plugin is not multisite compatible.'));
+				WP_CLI::error(__('This plugin is not multisite compatible.', 'musty'));
 			}
 
 			global $wp_filesystem;
@@ -190,7 +190,7 @@ class musty extends \WP_CLI_Command {
 						static::load_mu_plugins($file);
 					}
 				}
-				@closedir("{$base}{$subdir}");
+				@closedir($dir);
 			}
 
 			uasort(static::$mu_plugins, '_sort_uname_callback');
@@ -323,7 +323,7 @@ class musty extends \WP_CLI_Command {
 					$newest_file = $file;
 				}
 			}
-			@closedir($base);
+			@closedir($dir);
 		}
 
 		return $newest_file;
@@ -370,7 +370,7 @@ class musty extends \WP_CLI_Command {
 
 			// Try to create it.
 			if (!@symlink("{$base}{$k}", "{$base}{$slug}")) {
-				WP_CLI::warning(__('Could not create symlink to') . " {$k}.");
+				WP_CLI::warning(__('Could not create symlink to', 'musty') . " {$k}.");
 			}
 
 			$changed++;
@@ -389,11 +389,11 @@ class musty extends \WP_CLI_Command {
 
 				if (!array_key_exists($file, $links)) {
 					if (!@unlink("{$base}{$file}")) {
-						WP_CLI::warning(__('Could not remove old symlink ') . " {$base}{$file}.");
+						WP_CLI::warning(__('Could not remove old symlink', 'musty') . " {$base}{$file}.");
 					}
 				}
 			}
-			@closedir($base);
+			@closedir($dir);
 		}
 
 		if ($changed) {
@@ -441,9 +441,9 @@ class musty extends \WP_CLI_Command {
 		$out->display_items($data);
 
 		WP_CLI::success(
-			__(
-				sprintf('Found %d Must-Use plugin(s).', count($data)),
-				'musty'
+			sprintf(
+				__('Found %d Must-Use plugin(s).', 'musty'),
+				count($data)
 			)
 		);
 		return true;
@@ -481,7 +481,7 @@ class musty extends \WP_CLI_Command {
 				preg_match('/^[a-z0-9\-]+$/', $plugin) &&
 				$wp_filesystem->exists(trailingslashit(WPMU_PLUGIN_DIR) . $plugin)
 			) {
-				WP_CLI::warning("$plugin " . __('already exists. Use --force to re-install.'));
+				WP_CLI::warning("$plugin " . __('already exists. Use --force to re-install.', 'musty'));
 				continue;
 			}
 
@@ -502,14 +502,14 @@ class musty extends \WP_CLI_Command {
 				!array_key_exists('return_code', $result) ||
 				(0 !== $result['return_code'])
 			) {
-				WP_CLI::error("$plugin " . __('could not be installed.'));
+				WP_CLI::error("$plugin " . __('could not be installed.', 'musty'));
 			}
 
 			// Unfortunately `plugin install` doesn't return the slug
 			// corresponding to what it just did. The best we can do
 			// is see what script/directory most recently changed.
 			if (false === ($last = static::latest_plugin())) {
-				WP_CLI::error(__('The state of the following plugin could not be determined. It may or may not be in the normal plugins folder:') . " $plugin");
+				WP_CLI::error(__('The state of the following plugin could not be determined. It may or may not be in the normal plugins folder:', 'musty') . " $plugin");
 			}
 
 			// Try to move it.
@@ -520,26 +520,26 @@ class musty extends \WP_CLI_Command {
 			if ($wp_filesystem->exists($new_path)) {
 				if ($force) {
 					if (!$wp_filesystem->delete($new_path, true)) {
-						WP_CLI::error("$plugin " . __('already exists and could not be removed.'));
+						WP_CLI::error("$plugin " . __('already exists and could not be removed.', 'musty'));
 						$wp_filesystem->delete($old_path, true);
 					}
 
-					WP_CLI::warning("$plugin " . __('already exists; forcing re-install...'));
+					WP_CLI::warning("$plugin " . __('already exists; forcing re-install...', 'musty'));
 				}
 				else {
-					WP_CLI::warning("$plugin " . __('already exists. Use --force to re-install.'));
+					WP_CLI::warning("$plugin " . __('already exists. Use --force to re-install.', 'musty'));
 					$wp_filesystem->delete($old_path, true);
 					continue;
 				}
 			}
 
 			if (!$wp_filesystem->move($old_path, $new_path, true)) {
-				WP_CLI::error("$last " . __('could not be moved to the Must-Use folder.'));
+				WP_CLI::error("$last " . __('could not be moved to the Must-Use folder.', 'musty'));
 			}
 
 			$changed++;
 
-			WP_CLI::success("$last " . __('was successfully added to the Must-Use folder.'));
+			WP_CLI::success("$last " . __('was successfully added to the Must-Use folder.', 'musty'));
 		}
 
 		// Last thing, rebuild the links.
@@ -594,7 +594,7 @@ class musty extends \WP_CLI_Command {
 				(!$v['Version'] || !$v['DownloadURI']) &&
 				(is_null($to_update) || ($slug === $to_update))
 			) {
-				WP_CLI::warning("$slug " . __('has no update source.'));
+				WP_CLI::warning("$slug " . __('has no update source.', 'musty'));
 			}
 		}
 
@@ -633,7 +633,7 @@ class musty extends \WP_CLI_Command {
 				!array_key_exists('return_code', $result) ||
 				(0 !== $result['return_code'])
 			) {
-				WP_CLI::warning("$slug " . __('could not be updated.'));
+				WP_CLI::warning("$slug " . __('could not be updated.', 'musty'));
 				if ($wp_filesystem->exists($old_path)) {
 					$wp_filesystem->delete($old_path, true);
 				}
@@ -643,7 +643,7 @@ class musty extends \WP_CLI_Command {
 			// Remove the existing path, if necessary.
 			if ($wp_filesystem->exists($new_path)) {
 				if (!$wp_filesystem->delete($new_path, true)) {
-					WP_CLI::warning("$slug " . __('could not be updated.'));
+					WP_CLI::warning("$slug " . __('could not be updated.', 'musty'));
 					if ($wp_filesystem->exists($old_path)) {
 						$wp_filesystem->delete($old_path, true);
 					}
@@ -652,19 +652,17 @@ class musty extends \WP_CLI_Command {
 			}
 
 			if (!$wp_filesystem->move($old_path, $new_path, true)) {
-				WP_CLI::warning("$slug " . __('could not be updated.'));
+				WP_CLI::warning("$slug " . __('could not be updated.', 'musty'));
 				if ($wp_filesystem->exists($old_path)) {
 					$wp_filesystem->delete($old_path, true);
 				}
 				continue;
 			}
 
-			WP_CLI::success("$slug " . __(
-				sprintf(
-					'was successfully updated from %s to %s.',
-					$v['Version'],
-					$v['DownloadVersion']
-				)
+			WP_CLI::success("$slug " . sprintf(
+				__('was successfully updated from %s to %s.', 'musty'),
+				$v['Version'],
+				$v['DownloadVersion']
 			));
 
 			$changed++;
