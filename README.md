@@ -66,10 +66,10 @@ echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ zesty main" > /etc/apt/
 apt-get update
 
 # Install it!
-sudo apt-get install wp-cli-musty
+apt-get install wp-cli-musty
 ```
 
-Musty is meant to be installed as a global plugin; it's path will need to be added as a requirement in your WP-CLI [configuration](https://make.wordpress.org/cli/handbook/config/#config-files).
+Musty is meant to be installed as a global plugin; its path will need to be added as a requirement in your WP-CLI [configuration](https://make.wordpress.org/cli/handbook/config/#config-files).
 
 ```
 require:
@@ -143,7 +143,7 @@ To specify this URL via metadata, add an `Info URI` entry to your main plugin fi
  * Plugin Name: My Plugin
  * Version: 0.2.0-1
  * Info URI: https://mydomain.com/plugin-info.json
- ...
+ * ...
  */
 ```
 
