@@ -13,10 +13,21 @@ Musty is a [WP-CLI](https://wp-cli.org/) plugin that allows must-use WordPress p
 
 ##### Table of Contents
 
-1. [Installation](#installation)
-2. [Use](#use)
-3. [Developer Reference](#developer-reference)
-4. [License](#license)
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Use](#use)
+4. [Developer Reference](#developer-reference)
+5. [License](#license)
+
+
+
+## Requirements
+
+ * PHP 5.6+;
+ * A *nix OS;
+ * WP-CLI;
+
+Musty is not compatible with WordPress Multi-Site installations.
 
 
 
@@ -98,7 +109,8 @@ Musty includes the following commands:
 Command reference is available in the usual fashion:
 
 ```bash
-wp musty command --help
+# Type the following from your site root.
+wp musty the-command --help
 ```
 
 
