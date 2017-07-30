@@ -26,7 +26,7 @@ use \ZipArchive;
 class cli extends \WP_CLI_Command {
 
 	/**
-	 * Activate Plugins
+	 * (re)Generate Symlinks
 	 *
 	 * WordPress requires a PHP script in the main MU plugins folder,
 	 * which is different behavior than for normal plugins, which get
@@ -135,7 +135,7 @@ class cli extends \WP_CLI_Command {
 				'name'=>$v['Name'],
 				'installed'=>$v['Version'],
 				'latest'=>$v['DownloadVersion'],
-				'upgrade'=>$v['Upgrade'] ? 'Yes' : 'No'
+				'upgrade'=>($v['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty'))
 			);
 		}
 
@@ -371,6 +371,164 @@ class cli extends \WP_CLI_Command {
 
 		plugins::get_mu_plugins(true);
 		$this->dumpautoload();
+
+		return true;
+	}
+
+	/**
+	 * Musty Self-Update
+	 *
+	 * Update Musty to the latest release.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--force]
+	 * : If the plugin already exists, this will force a re-install.
+	 *
+	 * @param array $args Slug(s) or URI(s).
+	 * @param array $assoc_args Flags.
+	 * @return bool True/false.
+	 *
+	 * @subcommand self-update
+	 */
+	public function self_update($args, $assoc_args = array()) {
+		$force = !!Utils\get_flag_value($assoc_args, 'force', false);
+
+		if (false === ($musty = plugins::get_musty())) {
+			WP_CLI::error(
+				__('Musty version information could not be parsed.', 'musty')
+			);
+		}
+
+		if (!$musty['DownloadURI']) {
+			WP_CLI::error(
+				__('The remote download URI for Musty could not be found.', 'musty')
+			);
+		}
+
+		if (!$force && !$musty['Upgrade']) {
+			WP_CLI::warning(
+				__('Musty is already up-to-date. Use --force to reinstall.', 'musty')
+			);
+			return false;
+		}
+
+		// Get the source.
+		$file = download_url($musty['DownloadURI']);
+		if (is_wp_error($file)) {
+			WP_CLI::error(
+				$file->get_error_message()
+			);
+		}
+
+		// Unzip it.
+		$base = files::get_tmp_dir();
+		if (true !== files::unzip_file($file, $base)) {
+			@unlink($file);
+			files::clean_tmp_dir(true);
+			return new WP_Error(
+				'file',
+				__('Could not extract Zip', 'musty') . '.'
+			);
+		}
+		@unlink($file);
+
+		// Take a look at the files.
+		$files = files::get_tmp_files();
+		$source = false;
+		if (count($files) === 1) {
+			$source = $files[0];
+			if ('musty' !== basename($source)) {
+				$source = false;
+			}
+		}
+
+		// We're expecting a directory named "musty" to have been
+		// extracted.
+		if (!$source) {
+			return new WP_Error(
+				'file',
+				__('Could not extract Zip', 'musty') . '.'
+			);
+			files::clean_tmp_dir(true);
+		}
+
+		// Do some swapping.
+		$backup = trailingslashit(untrailingslashit(MUSTY_ROOT) . '.' . time());
+		@rename(MUSTY_ROOT, $backup);
+		if (!@file_exists(MUSTY_ROOT) && @file_exists($backup)) {
+			@rename($source, MUSTY_ROOT);
+			common\file::rmdir($backup);
+		}
+		else {
+			WP_CLI::error(
+				__('Musty could not override its own files.', 'musty')
+			);
+		}
+
+		files::clean_tmp_dir(true);
+		$musty_new = plugins::get_musty(true);
+
+		WP_CLI::success(
+			'Musty ' . sprintf(
+				__('was successfully updated from %s to %s.', 'musty'),
+				$musty['Version'],
+				$musty_new['Version']
+			)
+		);
+
+		return true;
+	}
+
+	/**
+	 * Musty Version
+	 *
+	 * Print information about Musty itself.
+	 *
+	 * @return bool True/false.
+	 */
+	public function version() {
+		if (false === ($musty = plugins::get_musty())) {
+			WP_CLI::error(
+				__('Musty version information could not be parsed.', 'musty')
+			);
+		}
+
+		// Pull relevant data.
+		$data = array(
+			array(
+				'slug'=>'musty',
+				'name'=>$musty['Name'],
+				'installed'=>$musty['Version'],
+				'latest'=>$musty['DownloadVersion'],
+				'upgrade'=>($musty['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty'))
+			)
+		);
+
+		$headers = array(
+			__('slug', 'musty'),
+			__('name', 'musty'),
+			__('installed', 'musty'),
+			__('latest', 'musty'),
+			__('upgrade', 'musty'),
+		);
+
+		Utils\format_items('table', $data, $headers);
+
+		if (!$musty['Upgrade']) {
+			WP_CLI::success(
+				__('Musty is up-to-date.', 'musty')
+			);
+		}
+		else {
+			WP_CLI::warning(
+				__('An update is available. Run "wp musty self-update" to apply it.', 'musty')
+			);
+		}
+
+		WP_CLI::log(
+			__('For more information, visit', 'musty') . " {$musty['PluginURI']}"
+		);
 
 		return true;
 	}

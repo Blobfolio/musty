@@ -133,7 +133,7 @@ wp musty --help
 
 ## Use
 
-Musty includes the following commands:
+Musty includes the following commands for managing must-use plugins:
 
 | Command      | Description                 |
 | ------------ | --------------------------- |
@@ -153,6 +153,13 @@ wp musty list --help
 wp musty uninstall --help
 wp musty upgrade --help
 ```
+
+Musty also includes a little in the way of self-awareness:
+
+| Command     | Description                                    |
+| ----------- | ---------------------------------------------- |
+| self-update | Update the Musty plugin to the latest version. |
+| version     | Show Musty plugin details.                     |
 
 
 

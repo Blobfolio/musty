@@ -41,6 +41,7 @@ class plugins {
 	);
 
 	protected static $mu_plugins;
+	protected static $musty;
 
 	/**
 	 * Get MU Plugins
@@ -122,7 +123,7 @@ class plugins {
 							// conventions for a plugin's "main" file.
 							// The only way to figure that out is to
 							// load PHP files and see if they have meta.
-							$plugin_data = get_plugin_data("{$base}{$subdir}{$file}", false, false );
+							$plugin_data = get_plugin_data("{$base}{$subdir}{$file}", false, false);
 
 							// If name is good, this must be a main plugin file.
 							if (!empty($plugin_data['Name'])) {
@@ -172,7 +173,6 @@ class plugins {
 
 			return true;
 		} catch (\Throwable $e) {
-			print_r($e);
 			return false;
 		} catch (\Exception $e) {
 			return false;
@@ -254,6 +254,55 @@ class plugins {
 					static::$mu_plugins[$k]['DownloadVersion']
 				) < 0
 			);
+		}
+	}
+
+	/**
+	 * Musty Information
+	 *
+	 * Return details about Musty itself.
+	 *
+	 * @param bool $refresh Refresh.
+	 * @return array|bool Musty info or false.
+	 */
+	public static function get_musty($refresh=false) {
+		if (!$refresh && is_array(static::$musty)) {
+			return static::$musty;
+		}
+
+		try {
+			// Local plugin data.
+			static::$musty = get_plugin_data(MUSTY_INDEX, false, false);
+			$extra = get_file_data(
+				MUSTY_INDEX,
+				array('InfoURI'=>'Info URI'),
+				'plugin'
+			);
+			static::$musty['InfoURI'] = $extra['InfoURI'];
+			static::$musty['DownloadURI'] = '';
+			static::$musty['DownloadVersion'] = '';
+			static::$musty['Upgrade'] = false;
+
+			// Remote plugin data.
+			$response = wp_remote_get(static::$musty['InfoURI']);
+			if (200 === wp_remote_retrieve_response_code($response)) {
+				$response = wp_remote_retrieve_body($response);
+				$response = json_decode($response, true);
+				if (
+					is_array($response) &&
+					isset($response['version']) &&
+					isset($response['download_link'])
+				) {
+					static::$musty['DownloadVersion'] = $response['version'];
+					static::$musty['DownloadURI'] = $response['download_link'];
+				}
+			}
+
+			return static::$musty;
+		} catch (\Throwable $e) {
+			return false;
+		} catch (\Exception $e) {
+			return false;
 		}
 	}
 
