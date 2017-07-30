@@ -1,0 +1,219 @@
+# WordPress Blank Pot
+# Copyright (C) 2014 ...
+# This file is distributed under the GNU General Public License v2 or later.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: "
+"Musty\n"
+"POT-Creation-Date: "
+"2017-07-30 00:47-0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Your "
+"Name <you@example.com>\n"
+"Language-Team: "
+"Blobfolio, LLC "
+"<hello@blobfolio.com>\n"
+"Report-Msgid-Bugs-To: "
+"Translator Name "
+"<translations@example."
+"com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/"
+"plain; charset=UTF-8\n"
+"Content-Transfer-"
+"Encoding: 8bit\n"
+"Plural-Forms: "
+"nplurals=2; plural=n != "
+"1;\n"
+"X-Textdomain-Support: "
+"yesX-Generator: Poedit "
+"1.6.4\n"
+"X-Poedit-SourceCharset: "
+"UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;esc_html_e;"
+"esc_html_x:1,2c;"
+"esc_html__;esc_attr_e;"
+"esc_attr_x:1,2c;"
+"esc_attr__;_ex:1,2c;"
+"_nx:4c,1,2;"
+"_nx_noop:4c,1,2;_x:1,2c;"
+"_n:1,2;_n_noop:1,2;"
+"__ngettext:1,2;"
+"__ngettext_noop:1,2;_c,"
+"_nc:4c,1,2\n"
+"X-Poedit-Basepath: ..\n"
+"Language: en_US\n"
+"X-Generator: Poedit "
+"2.0.1\n"
+"X-Poedit-"
+"SearchPath-0: .\n"
+"X-Poedit-"
+"SearchPathExcluded-0: "
+"node_modules\n"
+"X-Poedit-"
+"SearchPathExcluded-1: "
+"lib/vendor\n"
+
+#: index.php:40
+msgid ""
+"This plugin is not "
+"multisite compatible."
+msgstr ""
+
+#: index.php:47
+msgid ""
+"Must-Use is not "
+"configured."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:70
+msgid ""
+"Could not create symlink "
+"to"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:92
+msgid ""
+"Could not remove old "
+"symlink"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:97
+msgid "Removed old symlink"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:107
+msgid ""
+"The symlinks have been "
+"regenerated."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:125
+#: lib/blobfolio/wp/musty/cli.php:240
+msgid ""
+"No Must-Use plugins were "
+"found."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:143
+msgid "slug"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:144
+msgid "name"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:145
+msgid "installed"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:146
+msgid "latest"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:147
+msgid "upgrade"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:154
+#, php-format
+msgid ""
+"Found %d Must-Use "
+"plugin(s)."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:190
+msgid ""
+"already exists. Use --"
+"force to re-install."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:203
+msgid "was installed."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:265
+msgid ""
+"has no update source."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:272
+#: lib/blobfolio/wp/musty/cli.php:358
+msgid "is not installed."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:280
+msgid ""
+"All Must-Use plugins are "
+"up-to-date."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:285
+msgid ""
+"is already up-to-date."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:304
+#, php-format
+msgid ""
+"was successfully updated "
+"from %s to %s."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:337
+#: lib/blobfolio/wp/musty/cli.php:343
+msgid ""
+"A plugin slug is "
+"required."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:364
+msgid ""
+"could not be removed."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:369
+msgid "has been removed."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/files.php:79
+msgid ""
+"The Must-Use plugin "
+"directory does not exist "
+"and could not be created."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/files.php:100
+msgid ""
+"The Musty temporary "
+"directory could not be "
+"created."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/files.php:127
+msgid ""
+"The Musty temporary "
+"directory could not be "
+"cleaned."
+msgstr ""
+
+#: lib/blobfolio/wp/musty/plugins.php:294
+#: lib/blobfolio/wp/musty/plugins.php:327
+msgid "Invalid URI"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/plugins.php:340
+#: lib/blobfolio/wp/musty/plugins.php:354
+msgid ""
+"Could not extract Zip"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/plugins.php:370
+msgid "Plugin exists"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/plugins.php:383
+msgid "MU Plugin exists"
+msgstr ""
