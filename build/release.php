@@ -40,15 +40,15 @@ if (file_exists(RELEASE_BASE)) {
 	shell_exec('rm -rf ' . escapeshellarg(RELEASE_BASE));
 }
 
-// Copy the trunk.
-mkdir(RELEASE_BASE . 'opt', 0755, true);
-shell_exec('cp -aR ' . escapeshellarg(PLUGIN_BASE) . ' ' . escapeshellarg(RELEASE_SOURCE));
-
 // Copy the debian stuff.
-shell_exec('cp -aR ' . escapeshellarg(SKEL_DIR . 'DEBIAN/') . ' ' . escapeshellarg(RELEASE_BASE . 'DEBIAN/'));
+shell_exec('cp -aR ' . escapeshellarg(SKEL_DIR) . ' ' . escapeshellarg(RELEASE_BASE));
 $tmp = @file_get_contents(RELEASE_BASE . 'DEBIAN/control');
 $tmp = str_replace('%VERSION%', RELEASE_VERSION, $tmp);
 @file_put_contents(RELEASE_BASE . 'DEBIAN/control', $tmp);
+
+// Copy the trunk.
+mkdir(RELEASE_BASE . 'opt', 0755, true);
+shell_exec('cp -aR ' . escapeshellarg(PLUGIN_BASE) . ' ' . escapeshellarg(RELEASE_SOURCE));
 
 
 
