@@ -1,6 +1,6 @@
 # Musty
 
-Musty is a [WP-CLI](https://wp-cli.org/) plugin that allows must-use WordPress plugins to be managed more or less like regular plugins.
+Musty is a [WP-CLI](https://wp-cli.org/) plugin that allows [must-use](https://codex.wordpress.org/Must_Use_Plugins) WordPress plugins to be managed more or less like regular plugins.
 
  * Install must-use plugins from slug or URI.
  * Detect and apply must-use plugin updates.
@@ -13,11 +13,50 @@ Musty is a [WP-CLI](https://wp-cli.org/) plugin that allows must-use WordPress p
 
 ##### Table of Contents
 
-1. [Requirements](#requirements)
-2. [Installation](#installation)
-3. [Use](#use)
-4. [Developer Reference](#developer-reference)
-5. [License](#license)
+1. [How it Works](#how-it-works)
+2. [Requirements](#requirements)
+3. [Installation](#installation)
+4. [Use](#use)
+5. [Developer Reference](#developer-reference)
+6. [License](#license)
+
+
+
+## How it Works
+
+Must-use plugins are like normal plugins, except they're stored in `wp-content/mu-plugins/`, and management happens entirely through the file system. Because they exist, WordPress loads them at boot. That's the "must" in "must-use".
+
+The inability for such plugins to be managed through `wp-admin` is a primary selling point for system administrators.
+
+### Activation
+
+Many normal plugins can be installed in must-use mode, except for the fact that they're contained in a subdirectory. Because the MU process is entirely file-based, WordPress limits its scan to the top level of the `mu-plugins/` directory.
+
+To work around this, Musty generates a top-level [symlink](https://en.wikipedia.org/wiki/Symbolic_link) for each plugin it finds living in a subdirectory, using the slugs as a naming scheme. For example:
+
+```
+wp-content/mu-plugins/my-plugin.php -> wp-content/mu-plugins/my-plugin/index.php
+```
+
+WordPress loads the links, which resolve to the real plugins. Problem solved.
+
+Note: Musty should not be combined with alternative bootstrapping methods, such as an autoloader file containing manual `require()` references.
+
+### Installation
+
+Musty will install plugins in must-use mode given a slug or Zip file (local or remote). If the plugin is already installed as a regular plugin, it will be deleted to prevent collisions. This deletion bypasses the uninstall process, so data and settings should be retained.
+
+Not all plugins will work correctly in must-use mode. They must be able to correctly determine their path (`mu-plugins/` is not `plugins/`), and some functionality, like localization, requires the use of different functions to correctly trigger.
+
+### Updates
+
+One unfortunate consequence of `wp-admin` ignoring MU plugins is that they don't get to take part in the usual update triggers. Musty, at least, will parse each must-use plugin fully to find its remote version and download information, so system administrators can run updates via WP-CLI.
+
+Third-party-hosted plugins can also be updated in this way, provided they expose the necessary information. See [Developer Reference](#developer-reference) for a list of methods and examples.
+
+### Removal
+
+Must-use plugins can also be removed via Musty. This process will also clean up any broken symlinks, etc.
 
 
 
@@ -33,19 +72,9 @@ Musty is not compatible with WordPress Multi-Site installations.
 
 ## Installation
 
-To build from source:
+You can manually download [musty.zip](https://raw.githubusercontent.com/Blobfolio/musty/master/release/musty.zip) and extract it somewhere on your server.
 
-```bash
-# Clone the repository.
-git clone https://github.com/Blobfolio/musty.git musty
-
-# Run the build script. Afterwards, you'll find the compiled source in the "trunk" sub-directory.
-php musty/build/build.php
-```
-
-Alternatively, `.deb` binaries are available via Blobfolio's APT repository for Debian Stretch and Ubuntu Zesty. (Other Debian-based distributions may also work, but aren't officially supported.)
-
-Note: This depends on the `wp-cli` package, also provided by Blobfolio's repo. If missing, it will be installed too.
+Debian-based servers can also install Musty using Blobfolio's APT repository:
 
 ```bash
 # Import the signing key
@@ -65,18 +94,19 @@ echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ zesty main" > /etc/apt/
 # Update APT sources
 apt-get update
 
-# Install it!
+# Install it! Note: this will also install the "wp-cli"
+# package, if not present.
 apt-get install wp-cli-musty
 ```
 
-Musty is meant to be installed as a global plugin; its path will need to be added as a requirement in your WP-CLI [configuration](https://make.wordpress.org/cli/handbook/config/#config-files).
+Once you have the files on your server, they will need to be added to the WP-CLI [configuration](https://make.wordpress.org/cli/handbook/config/#config-files).
 
 ```
 require:
   - /opt/musty/index.php
 ```
 
-If you do not have a WP-CLI configuration already, you can use any of the following paths:
+WP-CLI automatically recognizes the following generic configuration paths:
  
  * `/site/root/wp-cli.local.yml`
  * `/site/root/wp-cli.yml`
@@ -92,6 +122,13 @@ ln -s /usr/share/musty/wp-cli.local.yml /your/preferred/config/path
 cp -a /usr/share/musty/wp-cli.local.yml /your/preferred/config/path
 ```
 
+To verify that the plugin is working correctly, `cd` to a site root and type:
+
+```bash
+# This should return information about Musty's subcommands.
+wp musty --help
+```
+
 
 
 ## Use
@@ -100,7 +137,7 @@ Musty includes the following commands:
 
 | Command      | Description                 |
 | ------------ | --------------------------- |
-| dumpautoload | Activate Plugins            |
+| dumpautoload | (re)Generate Symlinks       |
 | install      | Install a Must-Use Plugin   |
 | list         | List Must-Use Plugins       |
 | uninstall    | Uninstall a Must-Use Plugin |
@@ -109,8 +146,12 @@ Musty includes the following commands:
 Command reference is available in the usual fashion:
 
 ```bash
-# Type the following from your site root.
-wp musty the-command --help
+# e.g. type any of the following from a site's root.
+wp musty dumpautoload --help
+wp musty install --help
+wp musty list --help
+wp musty uninstall --help
+wp musty upgrade --help
 ```
 
 
