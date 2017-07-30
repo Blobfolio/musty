@@ -8,7 +8,7 @@
  * @wordpress-plugin
  * Plugin Name: Musty
  * Version: 0.2.0-1
- * Plugin URI: https://blobfolio.com
+ * Plugin URI: https://github.com/Blobfolio/musty
  * Description: Manage Must-Use Plugins via WP-CLI.
  * Author: Blobfolio, LLC
  * Author URI: https://blobfolio.com/
