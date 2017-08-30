@@ -135,7 +135,7 @@ class cli extends \WP_CLI_Command {
 				'name'=>$v['Name'],
 				'installed'=>$v['Version'],
 				'latest'=>$v['DownloadVersion'],
-				'upgrade'=>($v['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty'))
+				'upgrade'=>($v['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
 			);
 		}
 
@@ -501,8 +501,8 @@ class cli extends \WP_CLI_Command {
 				'name'=>$musty['Name'],
 				'installed'=>$musty['Version'],
 				'latest'=>$musty['DownloadVersion'],
-				'upgrade'=>($musty['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty'))
-			)
+				'upgrade'=>($musty['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
+			),
 		);
 
 		$headers = array(
