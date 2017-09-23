@@ -3,11 +3,11 @@
  * Manage Must-Use Plugins via WP-CLI.
  *
  * @package musty
- * @version 0.2.1-1
+ * @version 0.2.2-1
  *
  * @wordpress-plugin
  * Plugin Name: Musty
- * Version: 0.2.1-1
+ * Version: 0.2.2-1
  * Plugin URI: https://github.com/Blobfolio/musty
  * Info URI: https://raw.githubusercontent.com/Blobfolio/musty/master/release/musty.json
  * Description: Manage Must-Use Plugins via WP-CLI.
@@ -29,7 +29,7 @@ define('MUSTY_ROOT', dirname(__FILE__) . '/');
 define('MUSTY_INDEX', MUSTY_ROOT . 'index.php');
 
 // The bootstrap.
-@require dirname(__FILE__) . '/lib/autoload.php';
+require(dirname(__FILE__) . '/lib/autoload.php');
 
 use \blobfolio\wp\musty\files;
 use \blobfolio\wp\musty\vendor\common;

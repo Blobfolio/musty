@@ -10,7 +10,6 @@ spl_autoload_register(
                 'blobfolio\\wp\\musty\\cli' => '/blobfolio/wp/musty/cli.php',
                 'blobfolio\\wp\\musty\\files' => '/blobfolio/wp/musty/files.php',
                 'blobfolio\\wp\\musty\\plugins' => '/blobfolio/wp/musty/plugins.php',
-                'blobfolio\\wp\\musty\\vendor\\ForceUTF8\\Encoding' => '/vendor/neitanod/forceutf8/src/ForceUTF8/Encoding.php',
                 'blobfolio\\wp\\musty\\vendor\\common\\bc' => '/vendor/blobfolio/blob-common/lib/blobfolio/common/bc.php',
                 'blobfolio\\wp\\musty\\vendor\\common\\cast' => '/vendor/blobfolio/blob-common/lib/blobfolio/common/cast.php',
                 'blobfolio\\wp\\musty\\vendor\\common\\constants' => '/vendor/blobfolio/blob-common/lib/blobfolio/common/constants.php',

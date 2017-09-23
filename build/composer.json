@@ -16,8 +16,7 @@
     "blobfolio\/blob-common": "dev-master",
     "blobfolio\/blob-domain": "dev-master",
     "blobfolio\/blob-mimes": "dev-master",
-    "blobfolio\/blob-phone": "dev-master",
-    "neitanod/forceutf8": "dev-master"
+    "blobfolio\/blob-phone": "dev-master"
   },
   "config": {
     "vendor-dir": "lib\/vendor",
