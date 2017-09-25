@@ -21,7 +21,7 @@ use \ZipArchive;
  *
  * ## EXAMPLES
  *
- *     wp looksee --help
+ *     wp musty --help
  */
 class cli extends \WP_CLI_Command {
 
