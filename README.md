@@ -21,6 +21,7 @@ Musty is a [WP-CLI](https://wp-cli.org/) plugin that allows [must-use](https://c
 6. [License](#license)
 
 
+&nbsp;
 
 ## How it Works
 
@@ -59,6 +60,7 @@ Third-party-hosted plugins can also be updated in this way, provided they expose
 Must-use plugins can also be removed via Musty. This process will also clean up any broken symlinks, etc.
 
 
+&nbsp;
 
 ## Requirements
 
@@ -69,6 +71,7 @@ Must-use plugins can also be removed via Musty. This process will also clean up 
 Musty is not compatible with WordPress Multi-Site installations.
 
 
+&nbsp;
 
 ## Installation
 
@@ -130,6 +133,7 @@ wp musty --help
 ```
 
 
+&nbsp;
 
 ## Use
 
@@ -162,6 +166,7 @@ Musty also includes a little in the way of self-awareness:
 | version     | Show Musty plugin details.                     |
 
 
+&nbsp;
 
 ## Developer Reference
 
@@ -229,6 +234,7 @@ add_filter('musty_download_version_my-plugin/index.php', 'my_zip_function');
 ```
 
 
+&nbsp;
 
 ## License
 
@@ -249,3 +255,14 @@ This work is free. You can redistribute it and/or modify it under the terms of t
     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
     
     0. You just DO WHAT THE FUCK YOU WANT TO.
+
+### Donations
+
+<table>
+  <tbody>
+    <tr>
+      <td width="200"><img src="https://blobfolio.com/wp-content/themes/b3/svg/btc-github.svg" width="200" height="200" alt="Bitcoin QR" /></td>
+      <td width="450">If you have found this work useful and would like to contribute financially, Bitcoin tips are always welcome!<br /><br /><strong>1PQhurwP2mcM8rHynYMzzs4KSKpBbVz5is</strong></td>
+    </tr>
+  </tbody>
+</table>
