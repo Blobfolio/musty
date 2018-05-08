@@ -127,27 +127,27 @@ class cli extends \WP_CLI_Command {
 			return false;
 		}
 
+		$translated = array(
+			'slug'=>__('slug', 'musty'),
+			'name'=>__('name', 'musty'),
+			'installed'=>__('installed', 'musty'),
+			'latest'=>__('latest', 'musty'),
+			'upgrade'=>__('upgrade', 'musty'),
+		);
+
 		// Pull relevant data.
 		$data = array();
 		foreach ($plugins as $k=>$v) {
 			$data[] = array(
-				'slug'=>Utils\get_plugin_name($k),
-				'name'=>$v['Name'],
-				'installed'=>$v['Version'],
-				'latest'=>$v['DownloadVersion'],
-				'upgrade'=>($v['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
+				$translated['slug']=>Utils\get_plugin_name($k),
+				$translated['name']=>$v['Name'],
+				$translated['installed']=>$v['Version'],
+				$translated['latest']=>$v['DownloadVersion'],
+				$translated['upgrade']=>($v['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
 			);
 		}
 
-		$headers = array(
-			__('slug', 'musty'),
-			__('name', 'musty'),
-			__('installed', 'musty'),
-			__('latest', 'musty'),
-			__('upgrade', 'musty'),
-		);
-
-		Utils\format_items('table', $data, $headers);
+		Utils\format_items('table', $data, array_values($translated));
 
 		WP_CLI::success(
 			sprintf(
@@ -494,26 +494,26 @@ class cli extends \WP_CLI_Command {
 			);
 		}
 
+		$translated = array(
+			'slug'=>__('slug', 'musty'),
+			'name'=>__('name', 'musty'),
+			'installed'=>__('installed', 'musty'),
+			'latest'=>__('latest', 'musty'),
+			'upgrade'=>__('upgrade', 'musty'),
+		);
+
 		// Pull relevant data.
 		$data = array(
 			array(
-				'slug'=>'musty',
-				'name'=>$musty['Name'],
-				'installed'=>$musty['Version'],
-				'latest'=>$musty['DownloadVersion'],
-				'upgrade'=>($musty['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
+				$translated['slug']=>'musty',
+				$translated['name']=>$musty['Name'],
+				$translated['installed']=>$musty['Version'],
+				$translated['latest']=>$musty['DownloadVersion'],
+				$translated['upgrade']=>($musty['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
 			),
 		);
 
-		$headers = array(
-			__('slug', 'musty'),
-			__('name', 'musty'),
-			__('installed', 'musty'),
-			__('latest', 'musty'),
-			__('upgrade', 'musty'),
-		);
-
-		Utils\format_items('table', $data, $headers);
+		Utils\format_items('table', $data, array_values($translated));
 
 		if (!$musty['Upgrade']) {
 			WP_CLI::success(
