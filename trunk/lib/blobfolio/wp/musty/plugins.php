@@ -9,6 +9,7 @@
 namespace blobfolio\wp\musty;
 
 use \blobfolio\wp\musty\vendor\common;
+use \Throwable;
 use \WP_CLI;
 use \WP_CLI\Utils;
 use \WP_Error;
@@ -69,19 +70,19 @@ class plugins {
 	 * @param bool $refresh Refresh.
 	 * @return bool True/false.
 	 */
-	protected static function load_mu_plugins($subdir='', $refresh=false) {
+	protected static function load_mu_plugins(string $subdir='', bool $refresh=false) {
 		try {
 			$base = files::get_mu_plugins_dir();
 
 			// Figure out subdir. This can only be one level in.
 			if ($subdir) {
-				common\ref\cast::to_string($subdir);
+				common\ref\cast::string($subdir, true);
 				common\ref\file::untrailingslash($subdir);
 				common\ref\file::unleadingslash($subdir);
 
 				if (
-					(false !== common\mb::strpos($subdir, '/')) ||
-					('.' === common\mb::substr($subdir, 0, 1)) ||
+					(false !== strpos($subdir, '/')) ||
+					(0 === strpos($subdir, '.')) ||
 					!@is_dir("{$base}{$subdir}")
 				) {
 					return false;
@@ -172,9 +173,7 @@ class plugins {
 			static::load_mu_updates();
 
 			return true;
-		} catch (\Throwable $e) {
-			return false;
-		} catch (\Exception $e) {
+		} catch (Throwable $e) {
 			return false;
 		}
 	}
@@ -299,9 +298,7 @@ class plugins {
 			}
 
 			return static::$musty;
-		} catch (\Throwable $e) {
-			return false;
-		} catch (\Exception $e) {
+		} catch (Throwable $e) {
 			return false;
 		}
 	}
@@ -316,8 +313,8 @@ class plugins {
 	 * @param bool $force Force.
 	 * @return WP_Error|bool True or error.
 	 */
-	public static function get_source($source, $force=false) {
-		common\ref\cast::to_string($source);
+	public static function get_source(string $source, bool $force=false) {
+		common\ref\cast::string($source);
 		$file = false;
 		$downloaded = true;
 

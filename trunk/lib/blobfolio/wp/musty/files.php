@@ -10,6 +10,7 @@ namespace blobfolio\wp\musty;
 
 use \blobfolio\wp\musty\vendor\common;
 use \PclZip;
+use \Throwable;
 use \WP_CLI;
 use \WP_CLI\Utils;
 use \ZipArchive;
@@ -73,7 +74,7 @@ class files {
 		if (is_null(static::$mu_plugins_dir)) {
 			static::$mu_plugins_dir = common\file::path(WPMU_PLUGIN_DIR);
 			if (!@file_exists(static::$mu_plugins_dir)) {
-				@mkdir(static::$mu_plugins_dir, FS_CHMOD_DIR, true);
+				common\file::mkdir(static::$mu_plugins_dir, FS_CHMOD_DIR);
 				if (!@file_exists(static::$mu_plugins_dir)) {
 					WP_CLI::error(
 						__('The Must-Use plugin directory does not exist and could not be created.', 'musty')
@@ -94,7 +95,7 @@ class files {
 		if (is_null(static::$tmp_dir)) {
 			static::$tmp_dir = static::get_uploads_dir() . '.musty/';
 			if (!@file_exists(static::$tmp_dir)) {
-				@mkdir(static::$tmp_dir, FS_CHMOD_DIR, true);
+				common\file::mkdir(static::$tmp_dir, FS_CHMOD_DIR, true);
 				if (!@file_exists(static::$tmp_dir)) {
 					WP_CLI::error(
 						__('The Musty temporary directory could not be created.', 'musty')
@@ -112,7 +113,7 @@ class files {
 	 * @param bool $rebuild Rebuild.
 	 * @return bool True/false.
 	 */
-	public static function clean_tmp_dir($rebuild=true) {
+	public static function clean_tmp_dir(bool $rebuild=true) {
 		if (is_null(static::$tmp_dir)) {
 			return true;
 		}
@@ -133,8 +134,6 @@ class files {
 				static::get_tmp_dir();
 			}
 		} catch (Throwable $e) {
-			return false;
-		} catch (Exception $e) {
 			return false;
 		}
 
@@ -169,7 +168,7 @@ class files {
 	 * @param string $path Path.
 	 * @return bool True/false.
 	 */
-	public static function delete($path='') {
+	public static function delete(string $path) {
 		// Obviously bad path.
 		common\ref\file::path($path, true);
 		if (
@@ -180,31 +179,11 @@ class files {
 			return false;
 		}
 
-		try {
-			if (@is_file($path)) {
-				@unlink($path);
-			}
-			else {
-				// Scan all files in dir.
-				$handle = @opendir($path);
-				while (false !== ($entry = @readdir($handle))) {
-					// Anything but a dot === not empty.
-					if (('.' === $entry) || ('..' === $entry)) {
-						continue;
-					}
-
-					// And recurse.
-					static::delete("{$path}{$entry}");
-				}
-
-				if (common\file::empty_dir($path)) {
-					@rmdir($path);
-				}
-			}
-		} catch (\Throwable $e) {
-			return false;
-		} catch (\Exception $e) {
-			return false;
+		if (@is_file($path)) {
+			@unlink($path);
+		}
+		else {
+			common\file::rmdir($path);
 		}
 
 		return !@file_exists($path);
@@ -222,7 +201,7 @@ class files {
 	 * @param string $to Destination path.
 	 * @return bool True/false.
 	 */
-	public static function unzip_file($zip, $to) {
+	public static function unzip_file(string $zip, string $to) {
 		common\ref\file::path($zip);
 		common\ref\file::path($to);
 
@@ -253,19 +232,19 @@ class files {
 
 				// First pass, calculate the needed size and build a
 				// list of directories.
-				for ($x = 0; $x < $z->numFiles; $x++) {
+				for ($x = 0; $x < $z->numFiles; ++$x) {
 					if (false === ($info = $z->statIndex($x))) {
 						return false;
 					}
 
 					// Skip Mac nonsense.
-					if ('__MACOSX/' === common\mb::substr($info['name'], 0, 9)) {
+					if (0 === strpos($info['name'], '__MACOSX/')) {
 						continue;
 					}
 
 					$size += $info['size'];
 
-					if ('/' === common\mb::substr($info['name'], -1)) {
+					if ('/' === substr($info['name'], -1)) {
 						$dirs[] = common\file::path("{$to}{$info['name']}", false);
 					}
 					elseif ('.' !== ($dirname = dirname($info['name']))) {
@@ -284,7 +263,7 @@ class files {
 				rsort($dirs);
 				foreach ($dirs as $d) {
 					if (!@file_exists($d)) {
-						@mkdir($d, FS_CHMOD_DIR, true);
+						common\file::mkdir($d, FS_CHMOD_DIR);
 						if (!@is_dir($d)) {
 							return false;
 						}
@@ -292,15 +271,15 @@ class files {
 				}
 
 				// One more time around, kick out the files.
-				for ($x = 0; $x < $z->numFiles; $x++) {
+				for ($x = 0; $x < $z->numFiles; ++$x) {
 					if (false === ($info = $z->statIndex($x))) {
 						return false;
 					}
 
 					// Skippable things.
 					if (
-						('/' === common\mb::substr($info['name'], -1)) ||
-						('__MACOSX/' === common\mb::substr($info['name'], 0, 9))
+						('/' === substr($info['name'], -1)) ||
+						(0 === strpos($info['name'], '__MACOSX/'))
 					) {
 						continue;
 					}
@@ -321,9 +300,7 @@ class files {
 				$z->close();
 
 				return true;
-			} catch (\Throwable $e) {
-				return false;
-			} catch (\Exception $e) {
+			} catch (Throwable $e) {
 				return false;
 			}
 		}
@@ -344,7 +321,7 @@ class files {
 			// Again, one loop for size and whatnot.
 			foreach ($files as $v) {
 				// Skip Mac nonsense.
-				if ('__MACOSX/' === common\mb::substr($v['filename'], 0, 9)) {
+				if (0 === strpos($info['name'], '__MACOSX/')) {
 					continue;
 				}
 
@@ -369,7 +346,7 @@ class files {
 			rsort($dirs);
 			foreach ($dirs as $d) {
 				if (!@file_exists($d)) {
-					@mkdir($d, FS_CHMOD_DIR, true);
+					common\file::mkdir($d, FS_CHMOD_DIR, true);
 					if (!@is_dir($d)) {
 						return false;
 					}
@@ -381,7 +358,7 @@ class files {
 				// Skippable things.
 				if (
 					$v['folder'] ||
-					('__MACOSX/' === common\mb::substr($v['filename'], 0, 9))
+					(0 === strpos($info['name'], '__MACOSX/'))
 				) {
 					continue;
 				}
@@ -396,9 +373,7 @@ class files {
 			}
 
 			return true;
-		} catch (\Throwable $e) {
-			return false;
-		} catch (\Exception $e) {
+		} catch (Throwable $e) {
 			return false;
 		}
 
