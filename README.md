@@ -64,7 +64,7 @@ Must-use plugins can also be removed via Musty. This process will also clean up 
 
 ## Requirements
 
- * PHP 5.6+;
+ * PHP 7.0+;
  * A *nix OS;
  * WP-CLI;
 
