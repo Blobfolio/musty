@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: "
 "Musty\n"
 "POT-Creation-Date: "
-"2017-07-30 11:46-0700\n"
+"2018-05-08 12:15-0700\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Your "
 "Name <you@example.com>\n"
@@ -46,7 +46,7 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "Language: en_US\n"
 "X-Generator: Poedit "
-"2.0.1\n"
+"2.0.6\n"
 "X-Poedit-"
 "SearchPath-0: .\n"
 "X-Poedit-"
@@ -97,39 +97,39 @@ msgid ""
 "found."
 msgstr ""
 
-#: lib/blobfolio/wp/musty/cli.php:138
-#: lib/blobfolio/wp/musty/cli.php:504
-msgid "Yes"
-msgstr ""
-
-#: lib/blobfolio/wp/musty/cli.php:138
-#: lib/blobfolio/wp/musty/cli.php:504
-msgid "No"
-msgstr ""
-
-#: lib/blobfolio/wp/musty/cli.php:143
-#: lib/blobfolio/wp/musty/cli.php:509
+#: lib/blobfolio/wp/musty/cli.php:131
+#: lib/blobfolio/wp/musty/cli.php:498
 msgid "slug"
 msgstr ""
 
-#: lib/blobfolio/wp/musty/cli.php:144
-#: lib/blobfolio/wp/musty/cli.php:510
+#: lib/blobfolio/wp/musty/cli.php:132
+#: lib/blobfolio/wp/musty/cli.php:499
 msgid "name"
 msgstr ""
 
-#: lib/blobfolio/wp/musty/cli.php:145
-#: lib/blobfolio/wp/musty/cli.php:511
+#: lib/blobfolio/wp/musty/cli.php:133
+#: lib/blobfolio/wp/musty/cli.php:500
 msgid "installed"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:134
+#: lib/blobfolio/wp/musty/cli.php:501
+msgid "latest"
+msgstr ""
+
+#: lib/blobfolio/wp/musty/cli.php:135
+#: lib/blobfolio/wp/musty/cli.php:502
+msgid "upgrade"
 msgstr ""
 
 #: lib/blobfolio/wp/musty/cli.php:146
 #: lib/blobfolio/wp/musty/cli.php:512
-msgid "latest"
+msgid "Yes"
 msgstr ""
 
-#: lib/blobfolio/wp/musty/cli.php:147
-#: lib/blobfolio/wp/musty/cli.php:513
-msgid "upgrade"
+#: lib/blobfolio/wp/musty/cli.php:146
+#: lib/blobfolio/wp/musty/cli.php:512
+msgid "No"
 msgstr ""
 
 #: lib/blobfolio/wp/musty/cli.php:154
@@ -218,8 +218,8 @@ msgstr ""
 
 #: lib/blobfolio/wp/musty/cli.php:431
 #: lib/blobfolio/wp/musty/cli.php:451
-#: lib/blobfolio/wp/musty/plugins.php:389
-#: lib/blobfolio/wp/musty/plugins.php:403
+#: lib/blobfolio/wp/musty/plugins.php:386
+#: lib/blobfolio/wp/musty/plugins.php:400
 msgid ""
 "Could not extract Zip"
 msgstr ""
@@ -248,36 +248,36 @@ msgid ""
 "visit"
 msgstr ""
 
-#: lib/blobfolio/wp/musty/files.php:79
+#: lib/blobfolio/wp/musty/files.php:80
 msgid ""
 "The Must-Use plugin "
 "directory does not exist "
 "and could not be created."
 msgstr ""
 
-#: lib/blobfolio/wp/musty/files.php:100
+#: lib/blobfolio/wp/musty/files.php:101
 msgid ""
 "The Musty temporary "
 "directory could not be "
 "created."
 msgstr ""
 
-#: lib/blobfolio/wp/musty/files.php:127
+#: lib/blobfolio/wp/musty/files.php:128
 msgid ""
 "The Musty temporary "
 "directory could not be "
 "cleaned."
 msgstr ""
 
-#: lib/blobfolio/wp/musty/plugins.php:343
-#: lib/blobfolio/wp/musty/plugins.php:376
+#: lib/blobfolio/wp/musty/plugins.php:340
+#: lib/blobfolio/wp/musty/plugins.php:373
 msgid "Invalid URI"
 msgstr ""
 
-#: lib/blobfolio/wp/musty/plugins.php:419
+#: lib/blobfolio/wp/musty/plugins.php:416
 msgid "Plugin exists"
 msgstr ""
 
-#: lib/blobfolio/wp/musty/plugins.php:432
+#: lib/blobfolio/wp/musty/plugins.php:429
 msgid "MU Plugin exists"
 msgstr ""
