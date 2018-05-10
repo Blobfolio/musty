@@ -19,7 +19,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "ssh://git@blobfolio.com:3417/bob"
+      "url": "https://github.com/Blobfolio/bob.git"
     }
   ],
   "config": {
