@@ -4,5 +4,6 @@ Depends: wp-cli
 Section: base
 Priority: optional
 Architecture: amd64
+Installed-Size: %SIZE%
 Maintainer: Blobfolio LLC <hello@blobfolio.com>
 Description: Musty is a WP-CLI plugin for managing WordPress MU Plugins.

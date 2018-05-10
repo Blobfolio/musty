@@ -1,9 +1,9 @@
 {
-  "name": "musty",
-  "description": "Manage Must-Use Plugins via WP-CLI.",
-  "version": "0.3.0",
+  "name": "musty-build",
+  "description": "Build musty package.",
+  "version": "0.1",
   "type": "library",
-  "homepage": "https:\/\/blobfolio.com",
+  "homepage": "https:\/\/blobfolio.com\/",
   "license": "WTFPL",
   "authors": [
     {
@@ -14,20 +14,22 @@
   ],
   "require": {
     "php": ">= 7.0",
-    "blobfolio\/blob-common": "dev-7.0_Next",
-    "blobfolio\/blob-domain": "dev-7.0_Next",
-    "blobfolio\/blob-mimes": "dev-7.0_Next",
-    "blobfolio\/blob-phone": "dev-7.0_Next"
+    "bob": "dev-master"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "ssh://git@blobfolio.com:3417/bob"
+    }
+  ],
   "config": {
     "vendor-dir": "lib\/vendor",
     "preferred-install": "dist"
   },
+  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
-      "blobfolio\\wp\\cli\\":"lib\/blobfolio\/wp\/cli"
-  	},
-  	"files": [
-  	]
+      "blobfolio\\dev\\":"lib\/dev"},
+    "files":[]
   }
 }

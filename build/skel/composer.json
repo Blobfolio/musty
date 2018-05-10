@@ -1,0 +1,32 @@
+{
+    "name": "musty",
+    "description": "Manage Must-Use Plugins via WP-CLI.",
+    "version": "0.3.3",
+    "type": "library",
+    "homepage": "https:\/\/blobfolio.com",
+    "license": "WTFPL",
+    "authors": [
+        {
+            "name": "Josh Stoik",
+            "email": "josh@blobfolio.com",
+            "homepage": "https:\/\/blobfolio.com"
+        }
+    ],
+    "require": {
+        "php": ">= 7.0",
+        "blobfolio\/blob-common": "dev-7.0_Next",
+        "blobfolio\/blob-domain": "dev-7.0_Next",
+        "blobfolio\/blob-mimes": "dev-7.0_Next",
+        "blobfolio\/blob-phone": "dev-7.0_Next"
+    },
+    "config": {
+        "vendor-dir": "lib\/vendor",
+        "preferred-install": "dist"
+    },
+    "autoload": {
+        "psr-4": {
+            "blobfolio\\wp\\cli\\": "lib\/blobfolio\/wp\/cli"
+        },
+        "files": []
+    }
+}
