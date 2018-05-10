@@ -81,6 +81,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-blobfolio');
 
 	grunt.registerTask('php', ['blobphp:check']);
+	grunt.registerTask('build', ['clean']);
 
 	grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
