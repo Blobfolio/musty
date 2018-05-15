@@ -81,7 +81,7 @@ class plugin extends \blobfolio\bob\base\mike_wp {
 		log::print('Copying Debian release files…');
 
 		$tmp = io::make_dir();
-		v_file::copy(io::get_skel_dir(), $tmp);
+		v_file::copy(static::get_skel_dir(), $tmp);
 
 		// Except we don't need composer.
 		if (is_file("{$tmp}composer.json")) {
@@ -111,7 +111,7 @@ class plugin extends \blobfolio\bob\base\mike_wp {
 		);
 		file_put_contents($file, $content);
 
-		$deb = static::get_release_dir() . 'wp-cli-musty.deb';
+		$deb = dirname(static::get_release_path()) . '/wp-cli-musty.deb';
 		io::deb($tmp, $deb);
 
 		log::print('Cleaning up…');

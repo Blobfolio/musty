@@ -1,7 +1,7 @@
 {
     "name": "musty",
     "description": "Manage Must-Use Plugins via WP-CLI.",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "type": "library",
     "homepage": "https:\/\/blobfolio.com",
     "license": "WTFPL",
