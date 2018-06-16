@@ -21,6 +21,8 @@ class plugin extends \blobfolio\bob\base\mike_wp {
 	const DESCRIPTION = 'Musty is a WP-CLI plugin to help with Must-Use plugin management.';
 	const CONFIRMATION = '';
 	const SLUG = 'musty';
+	const USE_GRUNT = '';
+	const USE_NPM = 'build';
 
 	const RELEASE_TYPE = 'zip';
 	const RELEASE_COMPRESS = array('lib/vendor/blobfolio/');

@@ -1,10 +1,15 @@
 {
   "name": "musty",
   "devDependencies": {
-    "grunt": "*",
-    "grunt-contrib-watch": "*",
-    "grunt-notify": "*",
-    "grunt-contrib-clean": "*",
-    "grunt-blobfolio": "git+ssh://git@blobfolio.com:3417/grunt-blobfolio"
+    "blobfolio-phpcs": "git+ssh://git@blobfolio.com:3417/blobfolio-phpcs"
+  },
+  "scripts": {
+    "preinstall": "npm list onchange -g || npm install onchange -g",
+    "watch": "onchange '*.php' '**/*.php' -- npm run -s php",
+    "build": "npm run -s libs:clean && npm run -s notify:build",
+    "notify:build": "npm_scripts/notify-build.sh",
+    "libs:clean": "npm_scripts/libs-clean.sh",
+    "php": "npm_scripts/php.sh",
+    "php:fix": "npm_scripts/php-fix.sh"
   }
 }
