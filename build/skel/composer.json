@@ -14,10 +14,9 @@
     ],
     "require": {
         "php": ">= 7.0",
-        "blobfolio\/blob-common": "dev-7.0_Next",
-        "blobfolio\/blob-domain": "dev-7.0_Next",
-        "blobfolio\/blob-mimes": "dev-7.0_Next",
-        "blobfolio\/blob-phone": "dev-7.0_Next"
+        "blobfolio\/blob-common": "*",
+        "blobfolio\/blob-domain": "*",
+        "blobfolio\/blob-mimes": "*"
     },
     "config": {
         "vendor-dir": "lib\/vendor",
