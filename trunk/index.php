@@ -3,11 +3,11 @@
  * Manage Must-Use Plugins via WP-CLI.
  *
  * @package musty
- * @version 0.5.0
+ * @version 0.5.1
  *
  * @wordpress-plugin
  * Plugin Name: Musty
- * Version: 0.5.0
+ * Version: 0.5.1
  * Plugin URI: https://github.com/Blobfolio/musty
  * Info URI: https://raw.githubusercontent.com/Blobfolio/musty/master/release/musty.json
  * Description: Manage Must-Use Plugins via WP-CLI.
