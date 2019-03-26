@@ -8,11 +8,10 @@
 
 namespace blobfolio\wp\musty;
 
-use \blobfolio\wp\musty\vendor\common;
-use \PclZip;
-use \WP_CLI;
-use \WP_CLI\Utils;
-use \ZipArchive;
+use blobfolio\wp\musty\vendor\common;
+use WP_CLI;
+use WP_CLI\Utils;
+use WP_Error;
 
 /**
  * Musty
@@ -47,7 +46,7 @@ class cli extends \WP_CLI_Command {
 		$links = array();
 		foreach ($plugins as $k=>$v) {
 			// We only care about directories.
-			if (false === strpos($k, '/')) {
+			if (false === \strpos($k, '/')) {
 				continue;
 			}
 
@@ -55,19 +54,19 @@ class cli extends \WP_CLI_Command {
 			$links[$slug] = "{$base}{$k}";
 
 			// Remove if it exists.
-			if (@is_link("{$base}{$slug}")) {
+			if (@\is_link("{$base}{$slug}")) {
 				// Skip it?
-				if ("{$base}{$k}" === @readlink("{$base}{$slug}")) {
+				if ("{$base}{$k}" === @\readlink("{$base}{$slug}")) {
 					continue;
 				}
 
-				@unlink("{$base}{$slug}");
+				@\unlink("{$base}{$slug}");
 			}
 
 			// Try to create it.
-			if (!@symlink("{$base}{$k}", "{$base}{$slug}")) {
+			if (! @\symlink("{$base}{$k}", "{$base}{$slug}")) {
 				WP_CLI::warning(
-					__('Could not create symlink to', 'musty') . " {$k}."
+					\__('Could not create symlink to', 'musty') . " {$k}."
 				);
 			}
 
@@ -75,36 +74,36 @@ class cli extends \WP_CLI_Command {
 		}
 
 		// Now remove other symlinks.
-		if ($dir = @opendir($base)) {
-			while (false !== ($file = @readdir($dir))) {
+		if ($dir = @\opendir($base)) {
+			while (false !== ($file = @\readdir($dir))) {
 				if (
 					('.' === $file) ||
 					('..' === $file) ||
-					!@is_link("{$base}{$file}")
+					! @\is_link("{$base}{$file}")
 				) {
 					continue;
 				}
 
-				if (!array_key_exists($file, $links)) {
-					@unlink("{$base}{$file}");
-					if (@is_link("{$base}{$file}")) {
+				if (! \array_key_exists($file, $links)) {
+					@\unlink("{$base}{$file}");
+					if (@\is_link("{$base}{$file}")) {
 						WP_CLI::warning(
-							__('Could not remove old symlink', 'musty') . " {$base}{$file}."
+							\__('Could not remove old symlink', 'musty') . " {$base}{$file}."
 						);
 					}
 					else {
 						WP_CLI::warning(
-							__('Removed old symlink', 'musty') . " {$base}{$file}."
+							\__('Removed old symlink', 'musty') . " {$base}{$file}."
 						);
 					}
 				}
 			}
-			@closedir($dir);
+			@\closedir($dir);
 		}
 
 		if ($changed) {
 			WP_CLI::success(
-				__('The symlinks have been regenerated.', 'musty')
+				\__('The symlinks have been regenerated.', 'musty')
 			);
 		}
 	}
@@ -120,19 +119,19 @@ class cli extends \WP_CLI_Command {
 		$plugins = plugins::get_mu_plugins();
 
 		// Nothing?
-		if (!is_array($plugins) || !count($plugins)) {
+		if (! \is_array($plugins) || ! \count($plugins)) {
 			WP_CLI::warning(
-				__('No Must-Use plugins were found.', 'musty')
+				\__('No Must-Use plugins were found.', 'musty')
 			);
 			return false;
 		}
 
 		$translated = array(
-			'slug'=>__('slug', 'musty'),
-			'name'=>__('name', 'musty'),
-			'installed'=>__('installed', 'musty'),
-			'latest'=>__('latest', 'musty'),
-			'upgrade'=>__('upgrade', 'musty'),
+			'slug'=>\__('slug', 'musty'),
+			'name'=>\__('name', 'musty'),
+			'installed'=>\__('installed', 'musty'),
+			'latest'=>\__('latest', 'musty'),
+			'upgrade'=>\__('upgrade', 'musty'),
 		);
 
 		// Pull relevant data.
@@ -143,16 +142,16 @@ class cli extends \WP_CLI_Command {
 				$translated['name']=>$v['Name'],
 				$translated['installed']=>$v['Version'],
 				$translated['latest']=>$v['DownloadVersion'],
-				$translated['upgrade']=>($v['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
+				$translated['upgrade']=>($v['Upgrade'] ? \__('Yes', 'musty') : \__('No', 'musty')),
 			);
 		}
 
-		Utils\format_items('table', $data, array_values($translated));
+		Utils\format_items('table', $data, \array_values($translated));
 
 		WP_CLI::success(
-			sprintf(
-				__('Found %d Must-Use plugin(s).', 'musty'),
-				count($data)
+			\sprintf(
+				\__('Found %d Must-Use plugin(s).', 'musty'),
+				\count($data)
 			)
 		);
 		return true;
@@ -174,7 +173,7 @@ class cli extends \WP_CLI_Command {
 	 * @return bool True/false.
 	 */
 	public function install($args, $assoc_args = array()) {
-		$force = !!Utils\get_flag_value($assoc_args, 'force', false);
+		$force = !! Utils\get_flag_value($assoc_args, 'force', false);
 
 		$changed = 0;
 
@@ -182,25 +181,25 @@ class cli extends \WP_CLI_Command {
 		foreach ($args as $plugin) {
 			// Might be able to save some time...
 			if (
-				!$force &&
-				preg_match('/^[a-z0-9\-]+$/', $plugin) &&
-				@file_exists(files::get_mu_plugins_dir() . $plugin)
+				! $force &&
+				\preg_match('/^[a-z0-9\-]+$/', $plugin) &&
+				@\file_exists(files::get_mu_plugins_dir() . $plugin)
 			) {
 				WP_CLI::warning(
-					"$plugin " . __('already exists. Use --force to re-install.', 'musty')
+					"$plugin " . \__('already exists. Use --force to re-install.', 'musty')
 				);
 				continue;
 			}
 
 			$result = plugins::get_source($plugin, $force);
-			if (is_wp_error($result)) {
+			if (\is_wp_error($result)) {
 				WP_CLI::warning(
 					$result->get_error_message()
 				);
 			}
 			else {
 				WP_CLI::success(
-					"$plugin " . __('was installed.', 'musty')
+					"$plugin " . \__('was installed.', 'musty')
 				);
 				$changed++;
 			}
@@ -230,14 +229,14 @@ class cli extends \WP_CLI_Command {
 		$plugins = plugins::get_mu_plugins();
 
 		$to_update = null;
-		if (is_array($args) && count($args)) {
+		if (\is_array($args) && \count($args)) {
 			$to_update = $args[0];
 		}
 
 		// Nothing?
-		if (!is_array($plugins) || !count($plugins)) {
+		if (! \is_array($plugins) || ! \count($plugins)) {
 			WP_CLI::warning(
-				__('No Must-Use plugins were found.', 'musty')
+				\__('No Must-Use plugins were found.', 'musty')
 			);
 			return false;
 		}
@@ -250,7 +249,7 @@ class cli extends \WP_CLI_Command {
 			$slug = Utils\get_plugin_name($k);
 
 			// Looking for something specific?
-			if (!is_null($to_update)) {
+			if (! \is_null($to_update)) {
 				if ($slug !== $to_update) {
 					continue;
 				}
@@ -260,29 +259,29 @@ class cli extends \WP_CLI_Command {
 			if ($v['Upgrade'] && $v['DownloadURI']) {
 				$updates[$k] = $v;
 			}
-			elseif (!$v['Version'] || !$v['DownloadURI']) {
+			elseif (! $v['Version'] || ! $v['DownloadURI']) {
 				WP_CLI::warning(
-					"$slug " . __('has no update source.', 'musty')
+					"$slug " . \__('has no update source.', 'musty')
 				);
 			}
 		}
 
-		if (!is_null($to_update) && !$found) {
+		if (! \is_null($to_update) && ! $found) {
 			WP_CLI::error(
-				"$to_update " . __('is not installed.', 'musty')
+				"$to_update " . \__('is not installed.', 'musty')
 			);
 		}
 
 		// Nothing to update?
-		if (!count($updates)) {
-			if (is_null($to_update)) {
+		if (! \count($updates)) {
+			if (\is_null($to_update)) {
 				WP_CLI::success(
-					__('All Must-Use plugins are up-to-date.', 'musty')
+					\__('All Must-Use plugins are up-to-date.', 'musty')
 				);
 			}
 			else {
 				WP_CLI::success(
-					"$to_update " . __('is already up-to-date.', 'musty')
+					"$to_update " . \__('is already up-to-date.', 'musty')
 				);
 			}
 			return true;
@@ -293,15 +292,15 @@ class cli extends \WP_CLI_Command {
 			$slug = Utils\get_plugin_name($k);
 
 			$result = plugins::get_source($v['DownloadURI'], true);
-			if (is_wp_error($result)) {
+			if (\is_wp_error($result)) {
 				WP_CLI::warning(
 					$result->get_error_message()
 				);
 			}
 			else {
 				WP_CLI::success(
-					"$slug " . sprintf(
-						__('was successfully updated from %s to %s.', 'musty'),
+					"$slug " . \sprintf(
+						\__('was successfully updated from %s to %s.', 'musty'),
 						$v['Version'],
 						$v['DownloadVersion']
 					)
@@ -332,41 +331,41 @@ class cli extends \WP_CLI_Command {
 	 * @return bool True/false.
 	 */
 	public function uninstall($args=array()) {
-		if (!is_array($args) || !count($args)) {
+		if (! \is_array($args) || ! \count($args)) {
 			WP_CLI::error(
-				__('A plugin slug is required.', 'musty')
+				\__('A plugin slug is required.', 'musty')
 			);
 		}
 		$slug = common\mb::trim($args[0]);
-		if (!$slug) {
+		if (! $slug) {
 			WP_CLI::error(
-				__('A plugin slug is required.', 'musty')
+				\__('A plugin slug is required.', 'musty')
 			);
 		}
 
 		$base = files::get_mu_plugins_dir();
 
 		// If it is just a file, remove it.
-		if (@is_file("{$base}{$slug}")) {
-			@unlink("{$base}{$slug}");
+		if (@\is_file("{$base}{$slug}")) {
+			@\unlink("{$base}{$slug}");
 		}
-		elseif (@is_dir("{$base}{$slug}")) {
+		elseif (@\is_dir("{$base}{$slug}")) {
 			files::delete("{$base}{$slug}");
 		}
 		else {
 			WP_CLI::error(
-				"$slug " . __('is not installed.', 'musty')
+				"$slug " . \__('is not installed.', 'musty')
 			);
 		}
 
-		if (@file_exists("{$base}{$slug}")) {
+		if (@\file_exists("{$base}{$slug}")) {
 			WP_CLI::error(
-				"$slug " . __('could not be removed.', 'musty')
+				"$slug " . \__('could not be removed.', 'musty')
 			);
 		}
 
 		WP_CLI::success(
-			"$slug " . __('has been removed.', 'musty')
+			"$slug " . \__('has been removed.', 'musty')
 		);
 
 		plugins::get_mu_plugins(true);
@@ -392,30 +391,30 @@ class cli extends \WP_CLI_Command {
 	 * @subcommand self-update
 	 */
 	public function self_update($args, $assoc_args = array()) {
-		$force = !!Utils\get_flag_value($assoc_args, 'force', false);
+		$force = !! Utils\get_flag_value($assoc_args, 'force', false);
 
 		if (false === ($musty = plugins::get_musty())) {
 			WP_CLI::error(
-				__('Musty version information could not be parsed.', 'musty')
+				\__('Musty version information could not be parsed.', 'musty')
 			);
 		}
 
-		if (!$musty['DownloadURI']) {
+		if (! $musty['DownloadURI']) {
 			WP_CLI::error(
-				__('The remote download URI for Musty could not be found.', 'musty')
+				\__('The remote download URI for Musty could not be found.', 'musty')
 			);
 		}
 
-		if (!$force && !$musty['Upgrade']) {
+		if (! $force && ! $musty['Upgrade']) {
 			WP_CLI::warning(
-				__('Musty is already up-to-date. Use --force to reinstall.', 'musty')
+				\__('Musty is already up-to-date. Use --force to reinstall.', 'musty')
 			);
 			return false;
 		}
 
 		// Get the source.
-		$file = download_url($musty['DownloadURI']);
-		if (is_wp_error($file)) {
+		$file = \download_url($musty['DownloadURI']);
+		if (\is_wp_error($file)) {
 			WP_CLI::error(
 				$file->get_error_message()
 			);
@@ -424,45 +423,45 @@ class cli extends \WP_CLI_Command {
 		// Unzip it.
 		$base = files::get_tmp_dir();
 		if (true !== files::unzip_file($file, $base)) {
-			@unlink($file);
+			@\unlink($file);
 			files::clean_tmp_dir(true);
 			return new WP_Error(
 				'file',
-				__('Could not extract Zip', 'musty') . '.'
+				\__('Could not extract Zip', 'musty') . '.'
 			);
 		}
-		@unlink($file);
+		@\unlink($file);
 
 		// Take a look at the files.
 		$files = files::get_tmp_files();
 		$source = false;
-		if (count($files) === 1) {
+		if (\count($files) === 1) {
 			$source = $files[0];
-			if ('musty' !== basename($source)) {
+			if ('musty' !== \basename($source)) {
 				$source = false;
 			}
 		}
 
 		// We're expecting a directory named "musty" to have been
 		// extracted.
-		if (!$source) {
+		if (! $source) {
 			return new WP_Error(
 				'file',
-				__('Could not extract Zip', 'musty') . '.'
+				\__('Could not extract Zip', 'musty') . '.'
 			);
 			files::clean_tmp_dir(true);
 		}
 
 		// Do some swapping.
-		$backup = trailingslashit(untrailingslashit(MUSTY_ROOT) . '.' . time());
-		@rename(MUSTY_ROOT, $backup);
-		if (!@file_exists(MUSTY_ROOT) && @file_exists($backup)) {
-			@rename($source, MUSTY_ROOT);
+		$backup = \trailingslashit(\untrailingslashit(\MUSTY_ROOT) . '.' . \time());
+		@\rename(\MUSTY_ROOT, $backup);
+		if (! @\file_exists(\MUSTY_ROOT) && @\file_exists($backup)) {
+			@\rename($source, \MUSTY_ROOT);
 			common\file::rmdir($backup);
 		}
 		else {
 			WP_CLI::error(
-				__('Musty could not override its own files.', 'musty')
+				\__('Musty could not override its own files.', 'musty')
 			);
 		}
 
@@ -470,8 +469,8 @@ class cli extends \WP_CLI_Command {
 		$musty_new = plugins::get_musty(true);
 
 		WP_CLI::success(
-			'Musty ' . sprintf(
-				__('was successfully updated from %s to %s.', 'musty'),
+			'Musty ' . \sprintf(
+				\__('was successfully updated from %s to %s.', 'musty'),
 				$musty['Version'],
 				$musty_new['Version']
 			)
@@ -490,16 +489,16 @@ class cli extends \WP_CLI_Command {
 	public function version() {
 		if (false === ($musty = plugins::get_musty())) {
 			WP_CLI::error(
-				__('Musty version information could not be parsed.', 'musty')
+				\__('Musty version information could not be parsed.', 'musty')
 			);
 		}
 
 		$translated = array(
-			'slug'=>__('slug', 'musty'),
-			'name'=>__('name', 'musty'),
-			'installed'=>__('installed', 'musty'),
-			'latest'=>__('latest', 'musty'),
-			'upgrade'=>__('upgrade', 'musty'),
+			'slug'=>\__('slug', 'musty'),
+			'name'=>\__('name', 'musty'),
+			'installed'=>\__('installed', 'musty'),
+			'latest'=>\__('latest', 'musty'),
+			'upgrade'=>\__('upgrade', 'musty'),
 		);
 
 		// Pull relevant data.
@@ -509,25 +508,25 @@ class cli extends \WP_CLI_Command {
 				$translated['name']=>$musty['Name'],
 				$translated['installed']=>$musty['Version'],
 				$translated['latest']=>$musty['DownloadVersion'],
-				$translated['upgrade']=>($musty['Upgrade'] ? __('Yes', 'musty') : __('No', 'musty')),
+				$translated['upgrade']=>($musty['Upgrade'] ? \__('Yes', 'musty') : \__('No', 'musty')),
 			),
 		);
 
-		Utils\format_items('table', $data, array_values($translated));
+		Utils\format_items('table', $data, \array_values($translated));
 
-		if (!$musty['Upgrade']) {
+		if (! $musty['Upgrade']) {
 			WP_CLI::success(
-				__('Musty is up-to-date.', 'musty')
+				\__('Musty is up-to-date.', 'musty')
 			);
 		}
 		else {
 			WP_CLI::warning(
-				__('An update is available. Run "wp musty self-update" to apply it.', 'musty')
+				\__('An update is available. Run "wp musty self-update" to apply it.', 'musty')
 			);
 		}
 
 		WP_CLI::log(
-			__('For more information, visit', 'musty') . " {$musty['PluginURI']}"
+			\__('For more information, visit', 'musty') . " {$musty['PluginURI']}"
 		);
 
 		return true;

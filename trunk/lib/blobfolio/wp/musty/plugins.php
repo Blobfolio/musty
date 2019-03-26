@@ -8,11 +8,10 @@
 
 namespace blobfolio\wp\musty;
 
-use \blobfolio\wp\musty\vendor\common;
-use \Throwable;
-use \WP_CLI;
-use \WP_CLI\Utils;
-use \WP_Error;
+use blobfolio\wp\musty\vendor\common;
+use Throwable;
+use WP_CLI\Utils;
+use WP_Error;
 
 class plugins {
 	const API_FIELDS = array(
@@ -81,9 +80,9 @@ class plugins {
 				common\ref\file::unleadingslash($subdir);
 
 				if (
-					(false !== strpos($subdir, '/')) ||
-					(0 === strpos($subdir, '.')) ||
-					!@is_dir("{$base}{$subdir}")
+					(false !== \strpos($subdir, '/')) ||
+					(0 === \strpos($subdir, '.')) ||
+					! @\is_dir("{$base}{$subdir}")
 				) {
 					return false;
 				}
@@ -96,38 +95,38 @@ class plugins {
 
 			// Are we doing anything?
 			if (
-				is_array(static::$mu_plugins) &&
-				!$refresh &&
-				!$subdir
+				\is_array(static::$mu_plugins) &&
+				! $refresh &&
+				! $subdir
 			) {
 				return true;
 			}
-			elseif (!is_array(static::$mu_plugins) || $refresh) {
+			elseif (! \is_array(static::$mu_plugins) || $refresh) {
 				static::$mu_plugins = array();
 			}
 
-			if ($dir = @opendir("{$base}{$subdir}")) {
-				while (false !== ($file = @readdir($dir))) {
+			if ($dir = @\opendir("{$base}{$subdir}")) {
+				while (false !== ($file = @\readdir($dir))) {
 					if (
 						('.' === $file) ||
 						('..' === $file) ||
 						('.' === common\mb::substr($file, 0, 1)) ||
-						is_link("{$base}{$subdir}{$file}")
+						\is_link("{$base}{$subdir}{$file}")
 					) {
 						continue;
 					}
 
 					// Files.
-					if (@is_file("{$base}{$subdir}{$file}")) {
-						if ('.php' === strtolower(common\mb::substr($file, -4))) {
+					if (@\is_file("{$base}{$subdir}{$file}")) {
+						if ('.php' === \strtolower(common\mb::substr($file, -4))) {
 							// WordPress never codified naming
 							// conventions for a plugin's "main" file.
 							// The only way to figure that out is to
 							// load PHP files and see if they have meta.
-							$plugin_data = get_plugin_data("{$base}{$subdir}{$file}", false, false);
+							$plugin_data = \get_plugin_data("{$base}{$subdir}{$file}", false, false);
 
 							// If name is good, this must be a main plugin file.
-							if (!empty($plugin_data['Name'])) {
+							if (! empty($plugin_data['Name'])) {
 
 								// We want to provide a flexible way for
 								// self-hosted plugins to be updated via
@@ -140,12 +139,12 @@ class plugins {
 								// plugin file's header as "Info URI: x"
 								// or via the filter
 								// "musty_info_uri_$pluginfile".
-								$extra = get_file_data(
+								$extra = \get_file_data(
 									"{$base}{$subdir}{$file}",
 									array('InfoURI'=>'Info URI'),
 									'plugin'
 								);
-								$plugin_data['InfoURI'] = apply_filters("musty_info_uri_{$subdir}{$file}", $extra['InfoURI']);
+								$plugin_data['InfoURI'] = \apply_filters("musty_info_uri_{$subdir}{$file}", $extra['InfoURI']);
 
 								// We'll fetch these later.
 								$plugin_data['DownloadURI'] = '';
@@ -161,14 +160,14 @@ class plugins {
 						continue;
 					}
 					// Directories.
-					elseif (!$subdir && @is_dir("{$base}{$file}")) {
+					elseif (! $subdir && @\is_dir("{$base}{$file}")) {
 						static::load_mu_plugins($file);
 					}
 				}
-				@closedir($dir);
+				@\closedir($dir);
 			}
 
-			uasort(static::$mu_plugins, '_sort_uname_callback');
+			\uasort(static::$mu_plugins, '_sort_uname_callback');
 
 			static::load_mu_updates();
 
@@ -188,7 +187,7 @@ class plugins {
 	 * @return bool True/false.
 	 */
 	protected static function load_mu_updates() {
-		if (!is_array(static::$mu_plugins) || !count(static::$mu_plugins)) {
+		if (! \is_array(static::$mu_plugins) || ! \count(static::$mu_plugins)) {
 			return true;
 		}
 
@@ -196,14 +195,14 @@ class plugins {
 			// The plugin will try to check for updates itself, but
 			// plugins can also provide their own methods and pass the
 			// results via filters.
-			static::$mu_plugins[$k]['DownloadVersion'] = apply_filters("musty_download_version_$k", $v['DownloadVersion']);
-			static::$mu_plugins[$k]['DownloadURI'] = apply_filters("musty_download_uri_$k", $v['DownloadURI']);
+			static::$mu_plugins[$k]['DownloadVersion'] = \apply_filters("musty_download_version_$k", $v['DownloadVersion']);
+			static::$mu_plugins[$k]['DownloadURI'] = \apply_filters("musty_download_uri_$k", $v['DownloadURI']);
 
 			// Already found?
 			if (static::$mu_plugins[$k]['DownloadVersion']) {
 				// Just in case this wasn't set correctly before.
 				static::$mu_plugins[$k]['Upgrade'] = (
-					version_compare(
+					\version_compare(
 						static::$mu_plugins[$k]['Version'],
 						static::$mu_plugins[$k]['DownloadVersion']
 					) < 0
@@ -214,12 +213,12 @@ class plugins {
 
 			// Self-hosted?
 			if (static::$mu_plugins[$k]['InfoURI']) {
-				$response = wp_remote_get(static::$mu_plugins[$k]['InfoURI']);
-				if (200 === wp_remote_retrieve_response_code($response)) {
-					$response = wp_remote_retrieve_body($response);
-					$response = json_decode($response, true);
+				$response = \wp_remote_get(static::$mu_plugins[$k]['InfoURI']);
+				if (200 === \wp_remote_retrieve_response_code($response)) {
+					$response = \wp_remote_retrieve_body($response);
+					$response = \json_decode($response, true);
 					if (
-						is_array($response) &&
+						\is_array($response) &&
 						isset($response['version']) &&
 						isset($response['download_link'])
 					) {
@@ -231,13 +230,13 @@ class plugins {
 			else {
 				$slug = Utils\get_plugin_name($k);
 				if ($slug) {
-					$response = plugins_api(
+					$response = \plugins_api(
 						'plugin_information',
 						array('slug'=>$slug, 'fields'=>static::API_FIELDS)
 					);
 					if (
-						!is_wp_error($response) &&
-						is_a($response, 'stdClass') &&
+						! \is_wp_error($response) &&
+						\is_a($response, 'stdClass') &&
 						isset($response->version) &&
 						isset($response->download_link)
 					) {
@@ -248,7 +247,7 @@ class plugins {
 			}
 
 			static::$mu_plugins[$k]['Upgrade'] = (
-				version_compare(
+				\version_compare(
 					static::$mu_plugins[$k]['Version'],
 					static::$mu_plugins[$k]['DownloadVersion']
 				) < 0
@@ -265,15 +264,15 @@ class plugins {
 	 * @return array|bool Musty info or false.
 	 */
 	public static function get_musty($refresh=false) {
-		if (!$refresh && is_array(static::$musty)) {
+		if (! $refresh && \is_array(static::$musty)) {
 			return static::$musty;
 		}
 
 		try {
 			// Local plugin data.
-			static::$musty = get_plugin_data(MUSTY_INDEX, false, false);
-			$extra = get_file_data(
-				MUSTY_INDEX,
+			static::$musty = \get_plugin_data(\MUSTY_INDEX, false, false);
+			$extra = \get_file_data(
+				\MUSTY_INDEX,
 				array('InfoURI'=>'Info URI'),
 				'plugin'
 			);
@@ -283,12 +282,12 @@ class plugins {
 			static::$musty['Upgrade'] = false;
 
 			// Remote plugin data.
-			$response = wp_remote_get(static::$musty['InfoURI']);
-			if (200 === wp_remote_retrieve_response_code($response)) {
-				$response = wp_remote_retrieve_body($response);
-				$response = json_decode($response, true);
+			$response = \wp_remote_get(static::$musty['InfoURI']);
+			if (200 === \wp_remote_retrieve_response_code($response)) {
+				$response = \wp_remote_retrieve_body($response);
+				$response = \json_decode($response, true);
 				if (
-					is_array($response) &&
+					\is_array($response) &&
 					isset($response['version']) &&
 					isset($response['download_link'])
 				) {
@@ -320,45 +319,45 @@ class plugins {
 
 		// This appears to be a Zip path.
 		if (false !== common\mb::strpos($source, '.')) {
-			if (@is_file($source)) {
+			if (@\is_file($source)) {
 				$file = common\file::path($source, true);
 				$downloaded = false;
 			}
 			else {
 				common\ref\sanitize::url($source);
 				if ($source) {
-					$file = download_url($source);
-					if (is_wp_error($file)) {
+					$file = \download_url($source);
+					if (\is_wp_error($file)) {
 						return $file;
 					}
 				}
 			}
 
-			if (!$file) {
+			if (! $file) {
 				return new WP_Error(
 					'file',
-					__('Invalid URI', 'musty') . ": $source"
+					\__('Invalid URI', 'musty') . ": $source"
 				);
 			}
 		}
 
 		// Maybe it is a slug.
-		if (!$file) {
-			$response = plugins_api(
+		if (! $file) {
+			$response = \plugins_api(
 				'plugin_information',
 				array('slug'=>$source, 'fields'=>static::API_FIELDS)
 			);
 			if (
-				!is_wp_error($response) &&
-				is_a($response, 'stdClass') &&
+				! \is_wp_error($response) &&
+				\is_a($response, 'stdClass') &&
 				isset($response->version) &&
 				isset($response->download_link)
 			) {
 				$source = $response->download_link;
 				common\ref\sanitize::url($source);
 				if ($source) {
-					$file = download_url($source);
-					if (is_wp_error($file)) {
+					$file = \download_url($source);
+					if (\is_wp_error($file)) {
 						return $file;
 					}
 				}
@@ -367,10 +366,10 @@ class plugins {
 
 		// If there still isn't a file, we're done.
 		common\ref\file::path($file, true);
-		if (!$file) {
+		if (! $file) {
 			return new WP_Error(
 				'file',
-				__('Invalid URI', 'musty') . ": $source"
+				\__('Invalid URI', 'musty') . ": $source"
 			);
 		}
 
@@ -378,34 +377,34 @@ class plugins {
 		$base = files::get_tmp_dir();
 		if (true !== files::unzip_file($file, $base)) {
 			if ($downloaded) {
-				@unlink($file);
+				@\unlink($file);
 			}
 			files::clean_tmp_dir(true);
 			return new WP_Error(
 				'file',
-				__('Could not extract Zip', 'musty') . ": $source"
+				\__('Could not extract Zip', 'musty') . ": $source"
 			);
 		}
 
 		// Don't need the zip any more.
 		if ($downloaded) {
-			@unlink($file);
+			@\unlink($file);
 		}
 
 		// What do we have?
 		$files = files::get_tmp_files();
-		if (!count($files)) {
+		if (! \count($files)) {
 			return new WP_Error(
 				'file',
-				__('Could not extract Zip', 'musty') . ": $source"
+				\__('Could not extract Zip', 'musty') . ": $source"
 			);
 		}
 
 		foreach ($files as $file) {
-			$stub = preg_replace('/^' . preg_quote($base, '/') . '/ui', '', $file);
+			$stub = \preg_replace('/^' . \preg_quote($base, '/') . '/ui', '', $file);
 
 			// Does this exist as a regular plugin?
-			if (@file_exists(files::get_plugins_dir() . $stub)) {
+			if (@\file_exists(files::get_plugins_dir() . $stub)) {
 				if ($force) {
 					files::delete(files::get_plugins_dir() . $stub);
 				}
@@ -413,12 +412,12 @@ class plugins {
 					files::clean_tmp_dir(true);
 					return new WP_Error(
 						'file',
-						__('Plugin exists', 'musty') . ": $stub"
+						\__('Plugin exists', 'musty') . ": $stub"
 					);
 				}
 			}
 			// Or maybe in mu-plugins?
-			if (@file_exists(files::get_mu_plugins_dir() . $stub)) {
+			if (@\file_exists(files::get_mu_plugins_dir() . $stub)) {
 				if ($force) {
 					files::delete(files::get_mu_plugins_dir() . $stub);
 				}
@@ -426,12 +425,12 @@ class plugins {
 					files::clean_tmp_dir(true);
 					return new WP_Error(
 						'file',
-						__('MU Plugin exists', 'musty') . ": $stub"
+						\__('MU Plugin exists', 'musty') . ": $stub"
 					);
 				}
 			}
 
-			@rename($file, files::get_mu_plugins_dir() . $stub);
+			@\rename($file, files::get_mu_plugins_dir() . $stub);
 		}
 
 		// Last thing, clean the temporary directory.
